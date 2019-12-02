@@ -1,6 +1,7 @@
 public class Showing {
     ticket ticketsForShow[][];
     String movieName, showTime;
+    int numOpenSeats = 16;
     private static int theaterNum;
     Showing(){
 
@@ -15,7 +16,7 @@ public class Showing {
             for (int k = 0; k < rows; k++){
                 ticketsForShow[k][i] = new ticket(price, showTime, movie, counter+1, theaterNum, "");
                 counter++;
-            }
+                }
         }
     }
     boolean checkAvailability(int z, int k){
@@ -40,7 +41,12 @@ public class Showing {
         }
     }
     ticket getTicket(int c, int r){
+        numOpenSeats--;
         return ticketsForShow[c][r];
     }
+    int getEmpty(){
+        return numOpenSeats;
+    }
+
 
 }

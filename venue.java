@@ -9,6 +9,7 @@ public class venue {
     private Showing showings[] = new Showing[24]; //magic number here is number of movieNames * number of showtimes
     private Scanner s;
     private boolean printedTheater = false;
+    private int numOpenSeats = 16;
     venue() {
         movieNames = new Vector<String>();
         showTimes = new Vector<String>();
@@ -81,36 +82,39 @@ public class venue {
         }
     }
     public boolean isAvailable(String movieChoice, String movieTime, int seatNum){
-        for (int i = 0; i < showings.length; i++) {
-            if (showings[i].getMovieName(movieChoice) == true) {
-                if (showings[i].getShowTime(movieTime) == true) {
-                    if (showings[i].checkAvailability(getColumn(seatNum), getSeatRow(seatNum)) == true) { //if it's available
-                        return true;
+                for (int i = 0; i < showings.length; i++) {
+                    if (showings[i].getMovieName(movieChoice) == true) {
+                        if (showings[i].getShowTime(movieTime) == true) {
+                            if (showings[i].checkAvailability(getColumn(seatNum), getSeatRow(seatNum)) == true) { //if it's available
+                                numOpenSeats = showings[i].getEmpty();
+                                return true;
+                            }
+                        }
+                    }
+                }
+                return false;
+            }
+            public Vector<String> getShowTimes() {
+            return showTimes;
+        }
+
+        public ticket getTicket(String movieChoice, String movieTime, int seatNum){
+            int seatRow = getSeatRow(seatNum);
+            int seatColumn = getColumn(seatNum);
+            for (int i = 0; i < showings.length; i++) {
+                if (showings[i].getMovieName(movieChoice) == true) {
+                    if (showings[i].getShowTime(movieTime) == true) {
+                        showings[i].setAvailability(movieChoice, movieTime, getColumn(seatNum), getSeatRow(seatNum));
+                        numOpenSeats = showings[i].getEmpty();
+                        return showings[i].getTicket(seatColumn, seatRow);
                     }
                 }
             }
+            return null;
         }
-        return false;
-    }
-    public Vector<String> getShowTimes() {
-        return showTimes;
-    }
-
-    public ticket getTicket(String movieChoice, String movieTime, int seatNum){
-        int seatRow = getSeatRow(seatNum);
-        int seatColumn = getColumn(seatNum);
-        for (int i = 0; i < showings.length; i++) {
-            if (showings[i].getMovieName(movieChoice) == true) {
-                if (showings[i].getShowTime(movieTime) == true) {
-                    showings[i].setAvailability(movieChoice, movieTime, getColumn(seatNum), getSeatRow(seatNum));
-                    return showings[i].getTicket(seatColumn, seatRow);
-                }
-            }
-        }
-        return null;
-    }
-    public void printTheatre(String movieChoice, String movieTime) {
-        if (printedTheater) {
+        public void printTheatre(String movieChoice, String movieTime) {
+            if (printedTheater) {
+                int numEmptySeats = 0;
             for (int i = 0; i < 16; i++) {
                 if (i % 4 == 0 && i != 0) {
                     System.out.println("");
@@ -118,28 +122,31 @@ public class venue {
                 if (isAvailable(movieChoice, movieTime, i)) {
 
                     System.out.print("O ");
+                    numEmptySeats++;
 
                 } else {
                     System.out.print("X ");
 
                 }
+                System.out.println("There are "+ numEmptySeats +" empty seats in this theater");
 
             }
         } else {
-            for (int i = 0; i < 16; i++) {
-                if (i % 4 == 0) {
-                    System.out.println("");
-                }
-                if (isAvailable(movieChoice, movieTime, i)) {
-                    System.out.print("O ");
-                } else {
-                    System.out.print("X ");
-                }
+                for (int i = 0; i < 16; i++) {
+                    if (i % 4 == 0) {
+                        System.out.println("");
+                    }
+                    if (isAvailable(movieChoice, movieTime, i)) {
+                        System.out.print("O ");
+                    } else {
+                        System.out.print("X ");
+                    }
+                    System.out.println("There are 16 empty seats in this theater");
 
-            }
+                }
             printedTheater = true;
-        }
-        System.out.println("");
-    }
+            }
+            System.out.println("");
+            }
 
-}
+        }
